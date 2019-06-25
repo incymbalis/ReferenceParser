@@ -29,7 +29,7 @@ class ReferenceParser {
     }
 
     public parse(referenceString:string):IReferenceObject|false {
-        const matches = referenceString.match(/((?:(?:\d)[^a-zA-Z\d\s:]*)?[a-zA-Z-_\s]+)([^a-zA-Z\d:]*(\d+)(\D*(\d+[a-g]?))?)?/)
+        const matches = referenceString.match(/((?:(?:\d)[^a-zA-Z\d\s:]*)?[a-zA-Z-_\s]+)([^a-zA-Z\d:]*(\d+)(\D*(\d+[a-g]?|end))?)?/)
         return matches ? {
             book: this._matchBook(matches[1]) || this.defaults.book,
             chapter: matches[3] ? matches[3] : this.defaults.chapter,
@@ -53,7 +53,7 @@ class ReferenceParser {
             ranges: [],
         };
         
-        let currentChapter = firstPart.endChapter;
+        let currentChapter = firstPart.endChapter || firstPart.startChapter;
         
         output.ranges = [
             firstPart,
@@ -98,7 +98,7 @@ class ReferenceParser {
         } else {
             let end : IReferenceObject|false;
 
-            if (matches[1].match(/^\d+[:.]\d/)) { // a chapter reference is provided
+            if (matches[1].match(/^\d+[:.]/)) { // a chapter reference is provided
               end = this.parse(beginning.book + ' ' + matches[1]);
             } else { // the same chapter is used
               end = this.parse(beginning.book + ' ' + beginning.chapter + ':' + matches[1]);
