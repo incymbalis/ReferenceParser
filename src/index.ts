@@ -3,8 +3,21 @@ import generousBookNames from './data/generousBookNames'
 
 interface IReferenceObject {
     book:string|null;
-    chapter:number|null;
-    verse:number|null;
+    chapter:string|null;
+    verse:string|null;
+}
+
+interface IRangeObject {
+    book:string|null;
+    startChapter:string|null;
+    startVerse:string|null;
+    endChapter:string|null;
+    endVerse:string|null;
+}
+
+interface IComplexReferenceObject {
+    book: string|null;
+    ranges: IRangeObject[];
 }
 
 class ReferenceParser {
@@ -16,12 +29,101 @@ class ReferenceParser {
     }
 
     public parse(referenceString:string):IReferenceObject|false {
-        const matches = referenceString.match(/((?:(?:\d)[^a-zA-Z\d\s:]*)?[a-zA-Z-_\s]+)([^a-zA-Z\d:]*(\d+)(\D*(\d+))?)?/)
+        const matches = referenceString.match(/((?:(?:\d)[^a-zA-Z\d\s:]*)?[a-zA-Z-_\s]+)([^a-zA-Z\d:]*(\d+)(\D*(\d+[a-g]?))?)?/)
         return matches ? {
             book: this._matchBook(matches[1]) || this.defaults.book,
-            chapter: matches[3] ? +matches[3] : this.defaults.chapter,
-            verse: matches[5] ? +matches[5] : this.defaults.verse
+            chapter: matches[3] ? matches[3] : this.defaults.chapter,
+            verse: matches[5] ? matches[5] : this.defaults.verse
         } : false
+    }
+    
+    public parseComplexReference(referenceString : string) : IComplexReferenceObject|false {
+        const references = referenceString.split(/\s*[;,]\s*/);
+        
+        if (!references) return false;
+        
+        const [beginning, ...others] = references;
+        
+        const firstPart = this.parseRange(beginning);
+        
+        if (!firstPart) return false;
+        
+        const output : IComplexReferenceObject = {
+            book: firstPart.book,
+            ranges: [],
+        };
+        
+        let currentChapter = firstPart.endChapter;
+        
+        output.ranges = [
+            firstPart,
+            ...others.reduce((accumulator : IRangeObject[], ref) => {
+                console.log(currentChapter);
+                let newRef : IRangeObject|false;
+              
+                if (ref.match(/^\d+[:.]\d/)) { // chapter ref provided
+                    newRef = this.parseRange(firstPart.book + ' ' + ref);
+                } else { // no chapter ref provided
+                    console.log(firstPart.book + ' ' + currentChapter + ':' + ref);
+                    newRef = this.parseRange(firstPart.book + ' ' + currentChapter + ':' + ref);
+                }
+                
+                if (newRef) {
+                    accumulator.push(newRef);
+                             
+                    currentChapter = newRef.endChapter || newRef.startChapter;
+                }
+              
+                return accumulator;
+            }, []),
+        ];
+        
+        return output;
+    }
+    
+    public parseRange(referenceString:string):IRangeObject|false {
+        const matches = referenceString.split(/[-–—]/, 2);
+        
+        if (!matches.length) return false;
+        
+        const beginning = this.parse(referenceString);
+        if (beginning === false) return false;
+        
+        if (matches.length === 1) {
+            return {
+              book: beginning.book,
+              startChapter: beginning.chapter,
+              endChapter: null,
+              startVerse: beginning.verse,
+              endVerse: null
+            };
+        } else {
+            let end : IReferenceObject|false;
+
+            if (matches[1].match(/^\d+[:.]\d/)) { // a chapter reference is provided
+              end = this.parse(beginning.book + ' ' + matches[1]);
+            } else { // the same chapter is used
+              end = this.parse(beginning.book + ' ' + beginning.chapter + ':' + matches[1]);
+            }
+            
+            if (end === false) {
+              end = {
+                book: null,
+                chapter: null,
+                verse: null,
+              }
+            }
+            
+            return {
+              book: beginning.book,
+              startChapter: beginning.chapter,
+              endChapter: end.chapter,
+              startVerse: beginning.verse,
+              endVerse: end.verse
+            };
+        }
+      
+        //const groups = referenceString.split(/\s*[;,]\s*/);
     }
 
     private _matchBook = (urlBook:string):string|false => {
