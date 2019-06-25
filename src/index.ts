@@ -58,13 +58,11 @@ class ReferenceParser {
         output.ranges = [
             firstPart,
             ...others.reduce((accumulator : IRangeObject[], ref) => {
-                console.log(currentChapter);
                 let newRef : IRangeObject|false;
               
                 if (ref.match(/^\d+[:.]\d/)) { // chapter ref provided
                     newRef = this.parseRange(firstPart.book + ' ' + ref);
                 } else { // no chapter ref provided
-                    console.log(firstPart.book + ' ' + currentChapter + ':' + ref);
                     newRef = this.parseRange(firstPart.book + ' ' + currentChapter + ':' + ref);
                 }
                 
