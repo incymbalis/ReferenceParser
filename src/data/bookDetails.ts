@@ -46,6 +46,18 @@ const bookDetails:IBookDetails[] = [
 	{"name": "Zechariah", "chapters": 14, "abbreviation": "Zech", "shebanqBook": "Sacharia", "bentoBook": "Zec"},
 	{"name": "Malachi", "chapters": 3, "abbreviation": "Mal", "shebanqBook": "Maleachi", "bentoBook": "Mal"},
 
+	{"name": "Ecclesiasticus", "chapters": 43, "abbreviation": "Ecclus", "bentoBook": ""},
+	{"name": "Tobit", "chapters": 14, "abbreviation": "Tob", "bentoBook": ""},
+	{"name": "Wisdom", "chapters": 19, "abbreviation": "Wis", "bentoBook": ""},
+	{"name": "Baruch", "chapters": 6, "abbreviation": "Bar", "bentoBook": ""},
+	{"name": "1 Maccabees", "chapters": 16, "abbreviation": "1 Macc", "bentoBook": ""},
+	{"name": "2 Maccabees", "chapters": 15, "abbreviation": "2 Macc", "bentoBook": ""},
+	{"name": "1 Esdras", "chapters": 7, "abbreviation": "1 Esd", "bentoBook": ""},
+	{"name": "2 Esdras", "chapters": 16, "abbreviation": "2 Esd", "bentoBook": ""},
+	{"name": "Judith", "chapters": 16, "abbreviation": "Judith", "bentoBook": ""},
+	{"name": "Susannah", "chapters": 1, "abbreviation": "Sus", "bentoBook": ""},
+	{"name": "Prayer of Manasseh", "chapters": 1, "abbreviation": "Manass", "bentoBook": ""},
+
 	{"name": "Matthew", "chapters": 28, "abbreviation": "Matt", "bentoBook": "Mat"},
 	{"name": "Mark", "chapters": 16, "abbreviation": "Mark", "bentoBook": "Mar"},
 	{"name": "Luke", "chapters": 24, "abbreviation": "Luke", "bentoBook": "Luk"},

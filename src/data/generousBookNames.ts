@@ -69,6 +69,8 @@ const generousBookNames: { [s:string]:string } = {
 	"2chronicles": "2 Chronicles",
 	"chronicaii": "2 Chronicles",
 	
+	"sirach": "Ecclesiasticus",
+	
 	"matthew": "Matthew",
 	"mark": "Mark",
 	"luke": "Luke",
